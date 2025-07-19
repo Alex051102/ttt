@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from 'react';
+import { retrieveRawInitData } from '@telegram-apps/sdk';
+import "@twa-dev/types";
 
-function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: import('@twa-dev/types').WebApp;
+    };
+  }
 }
 
-export default App
+const App = () => {
+  useEffect(() => {
+    
+    if (!window.Telegram?.WebApp) {
+      console.warn('Telegram WebApp not detected');
+      return;
+    }
+  
+    const initDataRaw = retrieveRawInitData();
+    if (!initDataRaw) {
+      console.error('Telegram initData not available');
+      return;
+    }
+
+    
+    /* sendUserDataToBackend(initDataRaw);
+ */
+    
+    try {
+      window.Telegram.WebApp.expand();
+    } catch (e) {
+      console.error('Failed to expand WebApp:', e);
+    }
+  }, []);
+
+ /*  const sendUserDataToBackend = async (initDataRaw: string) => {
+    try {
+      const response = await fetch('https://user-api.laang.mxcode.dev/sign-in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `tma ${initDataRaw}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('User data sent successfully:', data);
+    } catch (error) {
+      console.error('Error sending user data:', error);
+    }
+  }; */
+
+  return <> <p>lknkll</p></>
+};
+
+export default App;
